@@ -3,7 +3,7 @@ import 'package:scoped_model/scoped_model.dart';
 
 void main() {
   runApp(MyApp(
-    model: CounterModel(),
+    model: CounterModel.instance,
   ));
 }
 
@@ -31,6 +31,17 @@ class MyApp extends StatelessWidget {
 //
 // Note: It must extend from Model.
 class CounterModel extends Model {
+  CounterModel._internal();
+
+  static CounterModel _instance;
+
+  static CounterModel get instance {
+    if (_instance == null) {
+      _instance = CounterModel._internal();
+    }
+    return _instance;
+  }
+
   int _counter = 0;
 
   int get counter => _counter;
@@ -78,14 +89,10 @@ class CounterHome extends StatelessWidget {
       ),
       // Use the ScopedModelDescendant again in order to use the increment
       // method from the CounterModel
-      floatingActionButton: ScopedModelDescendant<CounterModel>(
-        builder: (context, child, model) {
-          return FloatingActionButton(
-            onPressed: model.increment,
-            tooltip: 'Increment',
-            child: Icon(Icons.add),
-          );
-        },
+      floatingActionButton: FloatingActionButton(
+        onPressed: CounterModel.instance.increment,
+        tooltip: 'Increment',
+        child: Icon(Icons.add),
       ),
     );
   }
